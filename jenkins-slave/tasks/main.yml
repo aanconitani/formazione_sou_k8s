@@ -19,3 +19,8 @@
     ip: "{{ jenkins_slave_ip }}"
     volumes:
       - "{{ jenkins_data_volume }}:/var/jenkins_home"
+
+- name: Install Docker inside the Jenkins container
+  ansible.builtin.apt:
+    name: docker.io
+    state: present

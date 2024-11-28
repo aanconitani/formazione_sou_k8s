@@ -2,68 +2,57 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub') // Configura il tuo ID di credenziali Jenkins
-        DOCKER_IMAGE_NAME = 'aanconitani/jenkins-app'
+        REGISTRY_URL = 'https://hub.docker.com/repository/docker/aanconitani/jenkins-app'  // E.g., DockerHub registry or your custom registry
+        IMAGE_NAME = 'flask-app'      // E.g., flask-app
+        BUILD_TAG = 'latest'                // You can change this dynamically based on branch/tag
+        BUILD_ARGS = ''                     // Build arguments, if needed
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
-        stage('Set Image Tag') {
+        stage('Build and Push Docker Image') {
             steps {
                 script {
-                    def branchName = env.GIT_BRANCH.replace('origin/', '')
-                    if (env.GIT_TAG) {
-                        env.DOCKER_IMAGE_TAG = env.GIT_TAG
-                    } else if (branchName == 'master') {
-                        env.DOCKER_IMAGE_TAG = 'latest'
-                    } else if (branchName == 'develop') {
-                        env.DOCKER_IMAGE_TAG = "develop-${env.GIT_COMMIT.substring(0, 7)}"
-                    } else {
-                        error "Unsupported branch ${branchName}"
-                    }
-                    echo "Docker Image Tag: ${env.DOCKER_IMAGE_TAG}"
+                    // Call the buildAndPushTag function
+                    buildAndPushTag(
+                        registryUrl: env.REGISTRY_URL,
+                        image: env.IMAGE_NAME,
+                        buildTag: env.BUILD_TAG,
+                        dockerfileDir: "./flask-app",  // Specify the directory where Dockerfile is located
+                        dockerfileName: "Dockerfile",
+                        buildArgs: env.BUILD_ARGS,
+                        pushLatest: true
+                    )
                 }
             }
         }
 
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    sh """
-                    docker build \
-                        --platform=linux/amd64 \
-                        --build-arg BUILDKIT_INLINE_CACHE=1 \
-                        -t ${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} ./flask-app
-                    """
-                }
-            }
-        }
-
-        stage('Push Docker Image') {
-            steps {
-                script {
-                    sh """
-                    echo "${DOCKERHUB_CREDENTIALS_PSW}" | docker login -u "${DOCKERHUB_CREDENTIALS_USR}" --password-stdin
-                    docker push ${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}
-                    docker logout
-                    """
-                }
-            }
-        }
-    }
-
-    post {
-        success {
-            echo "Pipeline completed successfully. Image ${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} pushed to DockerHub."
-        }
-        failure {
-            echo "Pipeline failed. Check logs for more details."
-        }
+        // Additional stages as needed, for example:
+        // stage('Test') { steps { ... } }
+        // stage('Deploy') { steps { ... } }
     }
 }
 
+def buildAndPushTag(Map args) {
+    def defaults = [
+        registryUrl: '***',  // Default registry URL
+        dockerfileDir: "./",  // Default to the current directory
+        dockerfileName: "Dockerfile",  // Default Dockerfile name
+        buildArgs: "",       // Default build arguments
+        pushLatest: true      // Default to pushing the "latest" tag
+    ]
+    args = defaults + args
+
+    docker.withRegistry(args.registryUrl) {
+        def image = docker.build(args.image, "${args.buildArgs} ${args.dockerfileDir} -f ${args.dockerfileName}")
+        image.push(args.buildTag)
+        
+        if(args.pushLatest) {
+            image.push("latest")
+            sh "docker rmi --force ${args.image}:latest"
+        }
+        
+        sh "docker rmi --force ${args.image}:${args.buildTag}"
+
+        return "${args.image}:${args.buildTag}"
+    }
+}
