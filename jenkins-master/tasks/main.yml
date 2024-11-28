@@ -27,10 +27,6 @@
     volumes:
       - "{{ jenkins_data_volume }}:/var/jenkins_home"
       - "{{ jenkins_cert_volume }}:/certs/client:ro"
-
-- name: Install Docker inside the Jenkins container
-  ansible.builtin.apt:
-    name: docker.io
-    state: present
+      - "/run/podman/podman.sock:/run/podman/podman.sock"
 
 
