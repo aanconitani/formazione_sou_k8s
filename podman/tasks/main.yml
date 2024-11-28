@@ -1,0 +1,19 @@
+---
+# tasks file for podman
+
+- name: Install Podman
+  dnf:
+    name: podman
+    state: present
+
+- name: Enable and start Podman
+  systemd:
+    name: podman.socket
+    enabled: true
+    state: started
+
+- name: Create Jenkins network
+  containers.podman.podman_network:
+    name: "{{ jenkins_network_name }}"
+    subnet: "192.168.10.0/24"
+

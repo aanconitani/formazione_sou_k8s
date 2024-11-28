@@ -1,0 +1,21 @@
+---
+# tasks file for jenkins-slave
+- name: Create Jenkins data volume for slave
+  containers.podman.podman_volume:
+    name: "{{ jenkins_data_volume }}"
+    state: present
+
+- name: Run Jenkins slave container
+  containers.podman.podman_container:
+    name: "{{ jenkins_slave_name }}"
+    state: started
+    image: "{{ jenkins_slave_image }}"
+    detach: true
+    privileged: true
+    publish:
+      - "8081:8080"  
+      - "50001:50000"
+    network: "{{ jenkins_network_name }}"
+    ip: "{{ jenkins_slave_ip }}"
+    volumes:
+      - "{{ jenkins_data_volume }}:/var/jenkins_home"

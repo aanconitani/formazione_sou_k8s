@@ -1,0 +1,8 @@
+---
+- name: Deploy Podman and jenkins
+  hosts: all
+  become: true
+  roles:
+    - podman
+    - jenkins-master
+    - jenkins-slave

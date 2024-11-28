@@ -1,0 +1,29 @@
+---
+# tasks file for jenkins
+- name: Create Jenkins data volume
+  ansible.builtin.command:
+    cmd: podman volume create {{ jenkins_data_volume }}
+  args:
+    creates: "/var/lib/containers/storage/volumes/{{ jenkins_data_volume }}"
+
+- name: Create Jenkins Docker certs volume
+  ansible.builtin.command:
+    cmd: podman volume create {{ jenkins_cert_volume }}
+  args:
+    creates: "/var/lib/containers/storage/volumes/{{ jenkins_cert_volume }}"
+
+- name: Run Jenkins Master
+  containers.podman.podman_container:
+    name: "{{ jenkins_master_name }}"
+    image: "{{ jenkins_master_image }}"
+    state: started
+    detach: true
+    network: "{{ jenkins_network_name }}"
+    ip: "{{ jenkins_master_static_ip }}"
+    privileged: true
+    publish:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - "{{ jenkins_data_volume }}:/var/jenkins_home"
+      - "{{ jenkins_cert_volume }}:/certs/client:ro"
