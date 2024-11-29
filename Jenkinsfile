@@ -2,62 +2,67 @@ pipeline {
     agent any
 
     environment {
-        REGISTRY_URL = 'https://hub.docker.com/repository/docker/aanconitani/jenkins-app'  // E.g., Podman registry or your custom registry
-        IMAGE_NAME = 'flask-app'      // E.g., flask-app
-        BUILD_TAG = 'latest'          // Change dynamically based on branch/tag
-        BUILD_ARGS = ''               // Build arguments, if needed
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub') // Configure your Jenkins credentials ID
+        DOCKER_IMAGE_NAME = 'aanconitani/jenkins-app'
     }
 
     stages {
-        stage('Build and Push Image') {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Set Image Tag') {
             steps {
                 script {
-                    // Call the buildAndPushTag function
-                    buildAndPushTag(
-                        registryUrl: env.REGISTRY_URL,
-                        image: env.IMAGE_NAME,
-                        buildTag: env.BUILD_TAG,
-                        dockerfileDir: "./flask-app",  // Specify Dockerfile directory
-                        dockerfileName: "Dockerfile",
-                        buildArgs: env.BUILD_ARGS,
-                        pushLatest: true
-                    )
+                    def branchName = env.GIT_BRANCH.replace('origin/', '')
+                    if (env.GIT_TAG) {
+                        env.DOCKER_IMAGE_TAG = env.GIT_TAG
+                    } else if (branchName == 'master') {
+                        env.DOCKER_IMAGE_TAG = 'latest'
+                    } else if (branchName == 'develop') {
+                        env.DOCKER_IMAGE_TAG = "develop-${env.GIT_COMMIT.substring(0, 7)}"
+                    } else {
+                        error "Unsupported branch ${branchName}"
+                    }
+                    echo "Podman Image Tag: ${env.DOCKER_IMAGE_TAG}"
                 }
             }
         }
 
-        // Additional stages as needed, e.g., Test, Deploy, etc.
-    }
-}
-
-// Updated function to use Podman instead of Docker
-def buildAndPushTag(Map args) {
-    def defaults = [
-        registryUrl: '***',        // Default registry URL
-        dockerfileDir: "./",       // Default to the current directory
-        dockerfileName: "Dockerfile",  // Default Dockerfile name
-        buildArgs: "",             // Default build arguments
-        pushLatest: true           // Default to pushing the "latest" tag
-    ]
-    args = defaults + args
-
-    // Use Podman to build and push the image
-    podman.withRegistry(args.registryUrl) {
-        // Build the image using Podman
-        def image = podman.build(args.image, "${args.buildArgs} ${args.dockerfileDir} -f ${args.dockerfileName}")
-        
-        // Push the image with the specific tag
-        image.push(args.buildTag)
-
-        // Optionally push the latest tag
-        if (args.pushLatest) {
-            image.push("latest")
-            sh "podman rmi --force ${args.image}:latest" // Remove the latest tag locally
+        stage('Build Podman Image') {
+            steps {
+                script {
+                    sh """
+                    podman build \
+                        --platform=linux/amd64 \
+                        --build-arg BUILDKIT_INLINE_CACHE=1 \
+                        -t ${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} .
+                    """
+                }
+            }
         }
 
-        // Remove the image with the specific build tag locally
-        sh "podman rmi --force ${args.image}:${args.buildTag}"
+        stage('Push Podman Image') {
+            steps {
+                script {
+                    sh """
+                    echo "${DOCKERHUB_CREDENTIALS_PSW}" | podman login docker.io -u "${DOCKERHUB_CREDENTIALS_USR}" --password-stdin
+                    podman push ${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}
+                    podman logout docker.io
+                    """
+                }
+            }
+        }
+    }
 
-        return "${args.image}:${args.buildTag}"
+    post {
+        success {
+            echo "Pipeline completed successfully. Image ${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} pushed to DockerHub."
+        }
+        failure {
+            echo "Pipeline failed. Check logs for more details."
+        }
     }
 }
