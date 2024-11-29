@@ -1,2 +1,6 @@
 ---
 # handlers file for jenkins-slave
+- name: Restart Jenkins Slave
+  containers.podman.podman_container:
+    name: "{{ jenkins_slave_name }}"
+    state: restarted
