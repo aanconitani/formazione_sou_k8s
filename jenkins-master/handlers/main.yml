@@ -1,2 +1,6 @@
 ---
 # handlers file for jenkins
+- name: Restart Jenkins Master
+  containers.podman.podman_container:
+    name: "{{ jenkins_master_name }}"
+    state: restarted
