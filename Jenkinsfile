@@ -38,7 +38,9 @@ pipeline {
                     podman build \
                         --platform=linux/amd64 \
                         --build-arg BUILDKIT_INLINE_CACHE=1 \
-                        -t ${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} .
+                        -t ${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}
+                        -f flask-app/Dockerfile \
+                        flask-app                        
                     """
                 }
             }

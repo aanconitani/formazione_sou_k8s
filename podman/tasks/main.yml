@@ -15,5 +15,5 @@
 - name: Create Jenkins network
   containers.podman.podman_network:
     name: "{{ jenkins_network_name }}"
-    subnet: "192.168.10.0/24"
+    subnet: "{{ jenkins_network }}"
 

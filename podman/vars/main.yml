@@ -1,13 +1,5 @@
 ---
-# vars for jenkins
-jenkins_master_image: "docker.io/jenkins/jenkins:lts-jdk17"
-jenkins_slave_image: "docker.io/jenkins/inbound-agent"
-jenkins_master_name: "jenkins-master"
-jenkins_slave_name: "jenkins-slave"
-jenkins_master_static_ip: "192.168.55.10"
-jenkins_network_name: "jenkins_network"
-jenkins_data_volume: "jenkins-data"
-jenkins_cert_volume: "jenkins-docker-certs"
-jenkins_master_ports:
-  - "8080:8080"
-  - "50000:50000"
+# vars for podman
+
+jenkins_network_name: jenkins-network
+jenkins_network: 192.168.10.0/24

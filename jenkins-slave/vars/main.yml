@@ -1,7 +1,7 @@
 ---
 # vars file for jenkins-slave
-jenkins_slave_image: "docker.io/jenkins/jenkins:lts-jdk17"
+jenkins_slave_image: "docker.io/jenkins/jenkins:lts"
 jenkins_slave_name: "jenkins-slave"
 jenkins_slave_ip: "192.168.10.101"
-jenkins_network_name: "jenkins_network"
+jenkins_network_name: "jenkins-network"
 jenkins_data_volume: "jenkins-slave-data"

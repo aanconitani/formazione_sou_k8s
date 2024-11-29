@@ -1,16 +1,15 @@
 ---
 # tasks file for jenkins
-- name: Create Jenkins data volume
-  ansible.builtin.command:
-    cmd: podman volume create {{ jenkins_data_volume }}
-  args:
-    creates: "/var/lib/containers/storage/volumes/{{ jenkins_data_volume }}"
 
-- name: Create Jenkins Docker certs volume
-  ansible.builtin.command:
-    cmd: podman volume create {{ jenkins_cert_volume }}
-  args:
-    creates: "/var/lib/containers/storage/volumes/{{ jenkins_cert_volume }}"
+- name: Create Jenkins data volume 
+  containers.podman.podman_volume:
+    name: "{{ jenkins_data_volume }}"
+    state: present
+
+- name: Create Jenkins certs volume
+  containers.podman.podman_volume:
+    name: "{{ jenkins_cert_volume }}"
+    state: present
 
 - name: Run Jenkins Master
   containers.podman.podman_container:
@@ -28,5 +27,4 @@
       - "{{ jenkins_data_volume }}:/var/jenkins_home"
       - "{{ jenkins_cert_volume }}:/certs/client:ro"
       - "/run/podman/podman.sock:/run/podman/podman.sock"
-
 
