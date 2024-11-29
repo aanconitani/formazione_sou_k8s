@@ -21,4 +21,10 @@
       - "{{ jenkins_data_volume }}:/var/jenkins_home"
       - "/run/podman/podman.sock:/run/podman/podman.sock"
 
-
+- name: Update apt repository inside Jenkins container
+  ansible.builtin.command:
+    cmd: "podman exec --user root {{ jenkins_slave_name }} apt-get update"
+  
+- name: Install Podman inside Jenkins container
+  ansible.builtin.command:
+    cmd: "podman exec --user root {{ jenkins_slave_name }} apt-get install -y podman"
