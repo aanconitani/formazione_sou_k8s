@@ -1,27 +1,18 @@
-# syntax=docker/dockerfile:1.4
-FROM --platform=linux/arm64 python:3.10-alpine AS builder
+# Use the official Python 3.10 Alpine image for a smaller image size
+FROM python:3.10-alpine
 
+# Set the working directory inside the container
 WORKDIR /app
 
-COPY requirements.txt /app
-RUN --mount=type=cache,target=/root/.cache/pip \
-    pip3 install -r requirements.txt
+# Copy the requirements.txt file into the container
+COPY requirements.txt /app/
 
-COPY . /app
+# Install dependencies
+RUN pip3 install --no-cache-dir -r requirements.txt
 
+# Copy the rest of the application code into the container
+COPY . /app/
+
+# Set the default command to run the application
 ENTRYPOINT ["python3"]
 CMD ["app.py"]
-
-FROM builder as dev-envs
-
-RUN <<EOF
-apk update
-apk add git
-EOF
-
-RUN <<EOF
-addgroup -S docker
-adduser -S --shell /bin/bash --ingroup docker vscode
-EOF
-# install Docker tools (cli, buildx, compose)
-COPY --from=gloursdocker/docker / /
