@@ -1,5 +1,5 @@
 # Use the official Python 3.10 Alpine image for a smaller image size
-FROM python:3.10-alpine
+FROM --platform=linux/arm64 python:3.10-alpine
 
 # Set the working directory inside the container
 WORKDIR /app
