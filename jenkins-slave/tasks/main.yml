@@ -19,12 +19,34 @@
     ip: "{{ jenkins_slave_ip }}"
     volumes:
       - "{{ jenkins_data_volume }}:/var/jenkins_home"
-      - "/run/podman/podman.sock:/run/podman/podman.sock"
+      - "/run/podman/podman.sock:/run/podman/podman.sock:ro"
+      - ".kube:/home/vagrant/.kube:rw"
+      - ".minikube:/home/vagrant/.minikube:rw"
 
-- name: Update apt repository inside Jenkins container
+- name: Update apt repository inside Jenkins container, install helm and kubectl
   ansible.builtin.command:
     cmd: "podman exec --user root {{ jenkins_slave_name }} apt-get update"
   
 - name: Install Podman inside Jenkins container
   ansible.builtin.command:
     cmd: "podman exec --user root {{ jenkins_slave_name }} apt-get install -y podman"
+
+- name: Install kubectl inside Jenkins container
+  ansible.builtin.command:
+    cmd: "podman exec --user root {{ jenkins_slave_name }} curl -o /usr/local/bin/kubectl -LO https://storage.googleapis.com/kubernetes-release/release/v1.24.0/bin/linux/arm64/kubectl" 
+
+- name: Make kubectl executable inside Jenkins container
+  ansible.builtin.command:
+    cmd: "podman exec --user root {{ jenkins_slave_name }} chmod +x /usr/local/bin/kubectl"
+
+- name: Download Helm tarball in the container
+  ansible.builtin.command:
+    cmd: podman exec {{ jenkins_slave_name }} curl -sSL https://get.helm.sh/helm-v3.16.3-linux-arm64.tar.gz -o /tmp/helm-v3.16.3-linux-arm64.tar.gz
+
+- name: Extract Helm binary in the container
+  ansible.builtin.command:
+    cmd: podman exec {{ jenkins_slave_name }} tar -xzf /tmp/helm-v3.16.3-linux-arm64.tar.gz -C /tmp
+
+- name: Move Helm binary to /usr/local/bin in the container
+  ansible.builtin.command:
+    cmd: podman exec --user root {{ jenkins_slave_name }} mv /tmp/linux-arm64/helm /usr/local/bin/helm

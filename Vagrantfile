@@ -18,6 +18,19 @@ Vagrant.configure("2") do |config|
     sou1.vm.hostname = "sou1"
   end
 
+  config.vm.synced_folder "~/.kube", "/home/vagrant/.kube", create: true
+  config.vm.synced_folder "~/.minikube", "/home/vagrant/.minikube", create: true
+
+#Installo kubectl
+#  config.vm.provision "shell", inline: <<-SHELL
+#    sudo yum update -y
+#    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/arm64/kubectl"
+#    chmod +x kubectl
+#    sudo mv kubectl /usr/local/bin
+#    mkdir -p /home/vagrant/.kube
+#    sudo chown -R vagrant:vagrant /home/vagrant/.kube
+#  SHELL
+
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "./deploy.yml"
     ansible.become = true
