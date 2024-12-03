@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         NAMESPACE = 'formazione-sou' // Namespace esistente
-        KUBECONFIG = '/home/jenkins/.kube/config'
+        KUBECONFIG = '/Users/anconitani/.kube/config'
     }
     parameters {
         string(name: 'IMAGE_TAG', defaultValue: 'latest', description: 'Tag dell\'immagine Docker da rilasciare')
