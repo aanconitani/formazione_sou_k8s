@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        NAMESPACE = 'formazione_sou' // Namespace esistente
+        NAMESPACE = 'formazione-sou' // Namespace esistente
     }
     parameters {
         string(name: 'IMAGE_TAG', defaultValue: 'latest', description: 'Tag dell\'immagine Docker da rilasciare')
