@@ -21,6 +21,7 @@ Vagrant.configure("2") do |config|
   config.vm.synced_folder "~/.kube", "/home/vagrant/.kube", create: true
   config.vm.synced_folder "~/.minikube", "/home/vagrant/.minikube", create: true
 
+
 #Installo kubectl
 #  config.vm.provision "shell", inline: <<-SHELL
 #    sudo yum update -y

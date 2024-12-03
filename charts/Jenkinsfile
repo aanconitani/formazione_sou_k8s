@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Configure Kubectl') {
             steps {
-                sh 'kubectl config use-context minikube'
+                sh 'kubectl config use-context minikube-external'
             }
         }
         stage('Checkout') {
