@@ -8,6 +8,11 @@ pipeline {
         string(name: 'IMAGE_TAG', defaultValue: 'latest', description: 'Tag dell\'immagine Docker da rilasciare')
     }
     stages {
+        stage('Configure Kubectl') {
+            steps {
+                sh 'kubectl config use-context minikube'
+            }
+        }
         stage('Checkout') {
             steps {
                 checkout scm // Gestito automaticamente dalla multibranch pipeline
