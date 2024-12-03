@@ -20,8 +20,8 @@
     volumes:
       - "{{ jenkins_data_volume }}:/var/jenkins_home"
       - "/run/podman/podman.sock:/run/podman/podman.sock:ro"
-      - ".kube:/home/vagrant/.kube:rw"
-      - ".minikube:/home/vagrant/.minikube:rw"
+      - ".kube:/root/.kube/config:rw"
+      - ".minikube:/root/.minikube:rw"
 
 - name: Update apt repository inside Jenkins container, install helm and kubectl
   ansible.builtin.command:
