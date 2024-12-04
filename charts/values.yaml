@@ -15,3 +15,10 @@ autoscaling:
   minReplicas: 1  # Numero minimo di repliche
   maxReplicas: 10  # Numero massimo di repliche
   targetCPUUtilizationPercentage: 80  # Percentuale di utilizzo della CPU per scalare
+
+ingress:
+  enabled: true  # Impostato su true per abilitare l'Ingress
+  # Altre opzioni per l'Ingress (opzionali)
+  host: "flask-app.local"
+  paths:
+    - /
