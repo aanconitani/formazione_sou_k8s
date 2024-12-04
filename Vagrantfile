@@ -17,7 +17,9 @@ Vagrant.configure("2") do |config|
     sou1.vm.network "private_network", ip: "192.168.50.111"
     sou1.vm.hostname = "sou1"
   end
-  config.vm.network "forwarded_port", guest: 8443, host: 8443
+
+  #config.vm.network "forwarded_port", guest: 8443, host: 8443
+
   config.vm.synced_folder "~/.kube", "/home/vagrant/.kube", create: true
   config.vm.synced_folder "~/.minikube", "/home/vagrant/.minikube", create: true
 

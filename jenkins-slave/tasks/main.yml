@@ -12,6 +12,7 @@
     image: "{{ jenkins_slave_image }}"
     detach: true
     privileged: true
+#    network_mode: host
     publish:
       - "8081:8080"  
       - "50001:50000"

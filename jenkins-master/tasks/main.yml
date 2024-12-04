@@ -17,6 +17,7 @@
     image: "{{ jenkins_master_image }}"
     state: started
     detach: true
+#    network_mode: host
     network: "{{ jenkins_network_name }}"
     ip: "{{ jenkins_master_static_ip }}"
     privileged: true
