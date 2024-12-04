@@ -9,3 +9,9 @@ service:
   port: 5000
 
 replicaCount: 2
+
+autoscaling:
+  enabled: true  # Impostato su true per abilitare l'autoscaling
+  minReplicas: 1  # Numero minimo di repliche
+  maxReplicas: 10  # Numero massimo di repliche
+  targetCPUUtilizationPercentage: 80  # Percentuale di utilizzo della CPU per scalare
