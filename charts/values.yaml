@@ -17,7 +17,7 @@ image:
 imagePullSecrets: []
 # This is to override the chart name.
 nameOverride: "flask-app"
-fullnameOverride: "flask-chart"
+fullnameOverride: "flask-app"
 
 # This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
 serviceAccount:
@@ -49,12 +49,14 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-# This is for setting up a service more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/
 service:
-  # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
+  # This sets the service type. NodePort exposes the service on a port on each node in the cluster.
   type: NodePort
-  # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-  port: 80
+  # Configure the service's ports. Maps external traffic to the Flask app.
+  ports:
+    - port: 80               # The external port the service will expose (e.g., http://<node-ip>:80)
+      targetPort: 8000       # The port on the container where Flask is running (8000)
+      nodePort: 30099        # (Optional) The specific NodePort to use for external access. Defaults to a range if not specified.
 
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
