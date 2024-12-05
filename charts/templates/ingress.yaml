@@ -1,6 +1,22 @@
-ingress:
-  enabled: true  # Impostato su true per abilitare l'Ingress
-  # Altre opzioni di configurazione per l'Ingress, come:
-  # host: "example.com"
-  # paths:
-  #   - /
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "jenkins-app.fullname" . }}
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: {{ .Values.ingress.host }}
+      http:
+        paths:
+          {{- range .Values.ingress.paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ .Values.ingress.backend.service.name }}
+                port:
+                  number: {{ .Values.ingress.backend.service.port.number }}
+          {{- end }}
+{{- end }}

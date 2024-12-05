@@ -1,9 +1,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}
+  name: {{ include "jenkins-app.fullname" . }}
   labels:
     app: {{ .Chart.Name }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -15,7 +18,8 @@ spec:
         app: {{ .Chart.Name }}
     spec:
       containers:
-      - name: flask-app
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        ports:
-        - containerPort: 5000
+        - name: jenkins-app
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"  # Usa l'immagine definita nel values.yaml
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 5000
