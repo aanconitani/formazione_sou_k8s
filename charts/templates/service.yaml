@@ -1,15 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "charts.fullname" . }}
-  labels:
-    {{- include "charts.labels" . | nindent 4 }}
+  name: {{ include "flask-app-example.fullname" . }}
 spec:
   type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port }}
-      targetPort: http
-      protocol: TCP
-      name: http
+      targetPort: 5000
   selector:
-    {{- include "charts.selectorLabels" . | nindent 4 }}
+    app: {{ .Chart.Name }}
