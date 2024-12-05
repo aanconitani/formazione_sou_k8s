@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "jenkins-app.fullname" . }}
+  name: {{ include "flask-app-example.fullname" . }}
   labels:
     app: {{ .Chart.Name }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
@@ -18,8 +18,8 @@ spec:
         app: {{ .Chart.Name }}
     spec:
       containers:
-        - name: jenkins-app
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"  # Usa l'immagine definita nel values.yaml
+        - name: flask-app
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"  # Usa il tag dell'immagine definito nel values.yaml
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: 5000

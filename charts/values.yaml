@@ -1,13 +1,9 @@
 # values.yaml
 
 image:
-  repository: aanconitani/jenkins-app  # Il nome del repository Docker Hub
-  tag: "latest"                       # Il tag dell'immagine (ad esempio "latest")
-  pullPolicy: IfNotPresent            # La politica di pull per l'immagine
-
-service:
-  type: ClusterIP
-  port: 5000
+  repository: aanconitani/jenkins-app  # Repository dell'immagine su Docker Hub
+  tag: "latest"                       # Tag dell'immagine, che può essere specificato in fase di installazione
+  pullPolicy: IfNotPresent            # Politica di pull dell'immagine
 
 replicaCount: 2
 
@@ -17,6 +13,10 @@ autoscaling:
   maxReplicas: 10
   targetCPUUtilizationPercentage: 80
 
+service:
+  type: ClusterIP
+  port: 5000
+
 ingress:
   enabled: true
   host: "flask-app.local"
@@ -25,6 +25,6 @@ ingress:
       pathType: Prefix
       backend:
         service:
-          name: {{ include "jenkins-app.fullname" . }}
+          name: {{ include "flask-app-example.fullname" . }}
           port:
             number: 5000
