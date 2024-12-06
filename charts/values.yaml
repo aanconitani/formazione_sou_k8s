@@ -33,11 +33,12 @@ securityContext: {}
 # runAsNonRoot: true
 # runAsUser: 1000
 
-type: NodePort
-ports:
-  - port: 8000
-    targetPort: 8000
-    nodePort: 30080 # Porta accessibile dal nodo
+service:
+  type: NodePort
+  ports:
+    - port: 8000
+      targetPort: 8000
+      nodePort: 30080
 
 ingress:
   enabled: false
