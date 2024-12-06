@@ -7,7 +7,8 @@ image:
   pullPolicy: Always
   tag: ""
 
-imagePullSecrets: []
+imagePullSecrets:
+  - name: regcred
 
 nameOverride: "flask-app"
 fullnameOverride: "flask-app"
