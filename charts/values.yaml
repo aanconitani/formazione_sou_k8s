@@ -7,7 +7,7 @@ replicaCount: 1
 
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
-  repository: aanconitani/jenkins-app
+  repository: aanconitani/flask-app
   # This sets the pull policy for images.
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
@@ -51,12 +51,9 @@ securityContext: {}
 
 service:
   # This sets the service type. NodePort exposes the service on a port on each node in the cluster.
-  type: NodePort
+  type: LoadBalancer
   # Configure the service's ports. Maps external traffic to the Flask app.
-  ports:
-    - port: 80               # The external port the service will expose (e.g., http://<node-ip>:80)
-      targetPort: 8000       # The port on the container where Flask is running (8000)
-      nodePort: 30099        # (Optional) The specific NodePort to use for external access. Defaults to a range if not specified.
+  port: 8000
 
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
@@ -80,12 +77,12 @@ resources: {}
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+   limits:
+     cpu: 500m
+     memory: 512Mi
+   requests:
+     cpu: 250m
+     memory: 256Mi
 
 # This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
 livenessProbe:
