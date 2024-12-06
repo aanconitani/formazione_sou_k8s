@@ -33,7 +33,8 @@ securityContext: {}
 # runAsNonRoot: true
 # runAsUser: 1000
 
-  type: Loadbalance
+service:
+  type: LoadBalancer
   port: 8000
 
 ingress:
