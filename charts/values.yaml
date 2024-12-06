@@ -34,10 +34,8 @@ securityContext: {}
 # runAsUser: 1000
 
 service:
-  type: NodePort
+  type: Loadbalance
   port: 8000
-  targetPort: 8000
-  nodePort: 30080
 
 ingress:
   enabled: false
