@@ -18,6 +18,16 @@ pipeline {
                 checkout scm // Gestito automaticamente dalla multibranch pipeline
             }
         }
+        stage('update Helm Dependencies') {
+            steps {
+                script {
+                    dir('charts') {
+                        sh 'helm dependency update ./'
+                    }
+                }
+            }
+        }
+
         stage('Build Helm Dependencies') {
             steps {
                 script {
