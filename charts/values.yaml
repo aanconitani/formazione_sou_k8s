@@ -8,7 +8,7 @@ image:
   tag: ""
 
 imagePullSecrets:
-  - name: regcred
+  - name: regcred2
 
 nameOverride: "flask-app"
 fullnameOverride: "flask-app"
@@ -35,7 +35,7 @@ securityContext: {}
 
 service:
   type: NodePort
-  port: 8000
+  port: 5000
 
 ingress:
   enabled: false
