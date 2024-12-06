@@ -1,6 +1,4 @@
 # Default values for charts.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
 
 replicaCount: 1
 
@@ -10,6 +8,7 @@ image:
   tag: ""
 
 imagePullSecrets: []
+
 nameOverride: "flask-app"
 fullnameOverride: "flask-app"
 
@@ -23,17 +22,15 @@ podAnnotations: {}
 podLabels: {}
 
 podSecurityContext: {}
-# Example: Uncomment and adjust if needed
-#   fsGroup: 2000
+# fsGroup: 2000
 
 securityContext: {}
-# Example: Uncomment and adjust if needed
-#   capabilities:
-#     drop:
-#     - ALL
-#   readOnlyRootFilesystem: true
-#   runAsNonRoot: true
-#   runAsUser: 1000
+# capabilities:
+#   drop:
+#   - ALL
+# readOnlyRootFilesystem: true
+# runAsNonRoot: true
+# runAsUser: 1000
 
 service:
   type: LoadBalancer
@@ -61,18 +58,22 @@ resources:
 livenessProbe:
   httpGet:
     path: /
-    port: http
+    port: 8000
+  initialDelaySeconds: 10
+  periodSeconds: 10
+
 readinessProbe:
   httpGet:
     path: /
-    port: http
+    port: 8000
+  initialDelaySeconds: 10
+  periodSeconds: 10
 
 autoscaling:
   enabled: false
   minReplicas: 1
   maxReplicas: 100
   targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
 
 volumes: []
 volumeMounts: []
