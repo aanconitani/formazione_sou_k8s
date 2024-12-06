@@ -3,7 +3,7 @@
 replicaCount: 1
 
 image:
-  repository: aanconitani/flask-app
+  repository: aanconitani/jenkins-app
   pullPolicy: Always
   tag: "latest"
 
