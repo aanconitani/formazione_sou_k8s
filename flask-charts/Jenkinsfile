@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        NAMESPACE = 'formazione-sou' // Namespace esistente
+        NAMESPACE = 'formazione-sou'
         KUBECONFIG = '/Users/anconitani/.kube/config'
     }
     parameters {
@@ -13,39 +13,60 @@ pipeline {
                 sh 'kubectl config use-context minikube'
             }
         }
+
         stage('Checkout') {
             steps {
-                checkout scm // Gestito automaticamente dalla multibranch pipeline
+                checkout scm
             }
         }
-        stage('update Helm Dependencies') {
+
+        stage('Add Helm Repository') {
             steps {
                 script {
-                    dir('flask-charts') {
-                        // Add the repository if not already added
-                        sh 'helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx'
-                        // Update the repositories to ensure the latest charts are available
-                        sh 'helm repo update'
-                        // Fetch and update the chart dependencies
+                    // Add the ingress-nginx repository
+                    sh 'helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx'
+                    sh 'helm repo update'  // Update the Helm repo to get the latest charts
+                }
+            }
+        }
+
+        stage('Update Helm Dependencies') {
+            steps {
+                script {
+                    dir('charts') {
+                        // Update Helm dependencies, fetching from the repository
                         sh 'helm dependency update ./ --debug'
                     }
                 }
             }
         }
+
+        stage('Verify Charts Directory') {
+            steps {
+                script {
+                    dir('charts') {
+                        // Verify the charts directory
+                        sh 'ls -l'  // List the contents
+                    }
+                }
+            }
+        }
+
         stage('Build Helm Dependencies') {
             steps {
                 script {
-                    dir('flask-charts') {
-                        // Build the pendencies
+                    dir('charts') {
+                        // Build the Helm dependencies
                         sh 'helm dependency build ./ --debug'
                     }
                 }
             }
         }
+
         stage('Install/Upgrade Helm Chart') {
             steps {
                 script {
-                    dir('flask-charts') {
+                    dir('charts') {
                         sh """
                         helm upgrade --install flask-app ./ \
                             --namespace ${NAMESPACE} \
@@ -56,6 +77,7 @@ pipeline {
             }
         }
     }
+
     post {
         success {
             echo 'Pipeline completata con successo!'
