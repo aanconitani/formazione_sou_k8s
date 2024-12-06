@@ -5,7 +5,7 @@ replicaCount: 1
 image:
   repository: aanconitani/jenkins-app
   pullPolicy: Always
-  tag: "latest"
+  tag: ""
 
 imagePullSecrets:
   - name: regcred
