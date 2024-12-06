@@ -21,7 +21,7 @@ pipeline {
         stage('update Helm Dependencies') {
             steps {
                 script {
-                    dir('flask-charts/charts') {
+                    dir('flask-charts') {
                         // Add the repository if not already added
                         sh 'helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx'
                         // Update the repositories to ensure the latest charts are available
@@ -35,8 +35,8 @@ pipeline {
         stage('Build Helm Dependencies') {
             steps {
                 script {
-                    dir('flask-charts/charts') {
-                        // Build the Helm dependencies
+                    dir('flask-charts') {
+                        // Build the pendencies
                         sh 'helm dependency build ./ --debug'
                     }
                 }
