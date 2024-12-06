@@ -1,5 +1,5 @@
 # Use an official Python runtime as the base image
-FROM --platform=linux/arm64 python:3.8-slim
+FROM --platform=linux/arm64 python:3.8
 
 # Set the working directory in the container
 WORKDIR /app
