@@ -34,15 +34,16 @@ securityContext: {}
 # runAsUser: 1000
 
 service:
-  type: NodePort
-  port: 5000
+  type: ClusterIP
+  port: 80
+  targetPort: 5000
 
 ingress:
-  enabled: false
+  enabled: true 
   className: ""
   annotations: {}
   hosts:
-    - host: chart-example.local
+    - host: formazionesou.local
       paths:
         - path: /
           pathType: ImplementationSpecific
