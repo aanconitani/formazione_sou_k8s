@@ -5,7 +5,7 @@ replicaCount: 1
 image:
   repository: aanconitani/flask-app
   pullPolicy: Always
-  tag: ""
+  tag: "latest"
 
 imagePullSecrets:
   - name: regcred
