@@ -33,7 +33,7 @@ pipeline {
         stage('Update Helm Dependencies') {
             steps {
                 script {
-                    dir('charts') {
+                    dir('flask-charts') {
                         // Update Helm dependencies, fetching from the repository
                         sh 'helm dependency update ./ --debug'
                     }
@@ -44,7 +44,7 @@ pipeline {
         stage('Verify Charts Directory') {
             steps {
                 script {
-                    dir('charts') {
+                    dir('flask-charts') {
                         // Verify the charts directory
                         sh 'ls -l'  // List the contents
                     }
@@ -55,7 +55,7 @@ pipeline {
         stage('Build Helm Dependencies') {
             steps {
                 script {
-                    dir('charts') {
+                    dir('flask-charts') {
                         // Build the Helm dependencies
                         sh 'helm dependency build ./ --debug'
                     }
@@ -66,7 +66,7 @@ pipeline {
         stage('Install/Upgrade Helm Chart') {
             steps {
                 script {
-                    dir('charts') {
+                    dir('flask-charts') {
                         sh """
                         helm upgrade --install flask-app ./ \
                             --namespace ${NAMESPACE} \
