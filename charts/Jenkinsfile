@@ -18,6 +18,30 @@ pipeline {
                 checkout scm // Gestito automaticamente dalla multibranch pipeline
             }
         }
+        stage('update Helm Dependencies') {
+            steps {
+                script {
+                    dir('charts') {
+                        // Add the repository if not already added
+                        sh 'helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx'
+                        // Update the repositories to ensure the latest charts are available
+                        sh 'helm repo update'
+                        // Fetch and update the chart dependencies
+                        sh 'helm dependency update ./ --debug'
+                    }
+                }
+            }
+        }
+        stage('Build Helm Dependencies') {
+            steps {
+                script {
+                    dir('charts') {
+                        // Build the Helm dependencies
+                        sh 'helm dependency build ./ --debug'
+                    }
+                }
+            }
+        }
         stage('Install/Upgrade Helm Chart') {
             steps {
                 script {
