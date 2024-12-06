@@ -46,7 +46,7 @@ ingress:
     - host: formazionesou.local
       paths:
         - path: /
-          pathType: ImplementationSpecific
+            pathType: Prefix
   tls: []
 
 resources:
