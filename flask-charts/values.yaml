@@ -39,14 +39,16 @@ service:
   targetPort: 5000
 
 ingress:
-  enabled: true 
+  enabled: true
   className: ""
-  annotations: {}
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ingress.class: "nginx" 
   hosts:
     - host: formazionesou.local
       paths:
         - path: /
-          pathType: Prefix
+          pathType: Prefix  
   tls: []
 
 resources:
