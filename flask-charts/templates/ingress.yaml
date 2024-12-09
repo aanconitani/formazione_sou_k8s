@@ -23,21 +23,21 @@ spec:
       secretName: {{ .secretName }}
     {{- end }}
   {{- end }}
-  rules:
-    {{- range .Values.ingress.hosts }}
-    - host: {{ .host | quote }}
-      http:
-        paths:
-          {{- range .paths }}
-          - path: {{ .path }}
-            {{- with .pathType }}
-            pathType: {{ . }}
-            {{- end }}
-            backend:
-              service:
-                name: {{ include "charts.fullname" $ }}
-                port:
-                  number: {{ $.Values.service.port }}
+rules:
+  {{- range .Values.ingress.hosts }}
+  - host: {{ .host | quote }}
+    http:
+      paths:
+        {{- range .paths }}
+        - path: {{ .path | quote }}
+          {{- with .pathType }}
+          pathType: {{ . | quote }}
           {{- end }}
-    {{- end }}
+          backend:
+            service:
+              name: {{ include "charts.fullname" $ }}
+              port:
+                number: {{ $.Values.service.port }}
+        {{- end }}
+  {{- end }}
 {{- end }}
