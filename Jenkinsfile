@@ -36,7 +36,7 @@ pipeline {
                 script {
                     sh """
                     podman build \
-                        --platform=linux/amd64 \
+                        --platform=linux/arm64 \
                         --build-arg BUILDKIT_INLINE_CACHE=1 \
                         -f flask-app/Dockerfile \
                         -t ${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} \
