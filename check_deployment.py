@@ -33,8 +33,8 @@ def main():
     apps_v1 = client.AppsV1Api()
     
     # Define the namespace and deployment name
-    namespace = "formazione-sou"  # Replace with the correct namespace
-    deployment_name = "flask-app"  # Replace with the correct deployment name
+    namespace = "formazione-sou"  
+    deployment_name = "flask-app" 
     
     try:
         # Get the Deployment

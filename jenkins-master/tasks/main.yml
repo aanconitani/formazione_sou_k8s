@@ -6,18 +6,12 @@
     name: "{{ jenkins_data_volume }}"
     state: present
 
-- name: Create Jenkins certs volume
-  containers.podman.podman_volume:
-    name: "{{ jenkins_cert_volume }}"
-    state: present
-
 - name: Run Jenkins Master
   containers.podman.podman_container:
     name: "{{ jenkins_master_name }}"
     image: "{{ jenkins_master_image }}"
     state: started
     detach: true
-#    network_mode: host
     network: "{{ jenkins_network_name }}"
     ip: "{{ jenkins_master_static_ip }}"
     privileged: true
